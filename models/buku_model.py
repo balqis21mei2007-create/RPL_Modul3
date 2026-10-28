@@ -26,3 +26,21 @@ class BukuModel:
             cursor.close()
             return True
         return False
+
+    def delete_buku(self, id_buku):
+        try:
+            cursor = self.db.conn.cursor()  # Sesuaikan dengan kursor yang biasa Anda pakai (misal: self.db.cursor())
+            
+            # Langkah 1: Hapus dulu riwayat peminjaman yang terikat dengan buku ini
+            query_peminjaman = "DELETE FROM peminjaman WHERE id_buku = %s"
+            cursor.execute(query_peminjaman, (id_buku,))
+            
+            # Langkah 2: Setelah aman, hapus bukunya dari tabel buku
+            query_buku = "DELETE FROM buku WHERE id_buku = %s"
+            cursor.execute(query_buku, (id_buku,))
+            
+            self.db.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error database: {e}")
+            return False
